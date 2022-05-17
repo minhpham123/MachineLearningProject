@@ -1,6 +1,6 @@
 ---
-title: "Pstat131 Project"
-author: 'By : Minh Pham (#3609831) and Eva Koujikov (#9775404)'
+title: "Machine Learning Project"
+author: 'By : Minh Pham and Eva Koujikov'
 output:
   pdf_document: 
     latex_engine: xelatex
@@ -29,7 +29,7 @@ library(ggplot2)
 
 ## Census Data
 
-We essentially start with the 2017 United States county-level census data, which is available here. This dataset contains many demographic variables for each county in the U.S.
+We essentially start with the 2017 United States county-level census data. This dataset contains many demographic variables for each county in the U.S.
 
 We load in and clean the census dataset by transforming the full state names to abbreviations (to match the education dataset in later steps). Specifically, R contains default global variables state.name and state.abb that store the full names and the associated abbreviations of the 50 states. However, it does not contain District of Columbia (and the associated DC). We added it back manually since census contains information in DC. We further remove data from Purto Rico to ease the visualization in later steps.
 
@@ -64,7 +64,7 @@ education <- read_csv("./education.csv") %>%
 
 ## Preliminary Data Analysis
 
-1. (1 pts) Report the dimension of census. (1 pts) Are there missing values in the data set? (1 pts) Compute the total number of distinct values in State in census to verify that the data contains all states and a federal district.
+Report the dimension of census, checked if there are missing values within the data, and computed the total number of distinct values in State feature of the census data to verify that the data contains all states and a federal district.
 
 ```{r}
 # check dimensions of census
@@ -85,7 +85,7 @@ length(unique(census$State))
 ```
 There are 51 unique values in state, 50 of them being all of the different states and 1 of them being the federal district
 
-2. (1 pts) Report the dimension of education. (1 pts) How many distinct counties contain missing values in the data set? (1 pts) Compute the total number of distinct values in County in education. (1 pts) Compare the values of total number of distinct county in education with that in census. (1 pts) Comment on your findings.
+Reported the dimension of education, Checked if distinct counties contain missing values in the data set, computed the total number of distinct values in County in education, compared the values of total number of distinct county in education with that in census
 
 ```{r}
 # check dimensions of education
@@ -112,7 +112,7 @@ There are 1877 distinct values in County in the education dataset. County in the
 
 ## Data Wrangling 
 
-3. (2 pts) Remove all NA values in education, if there is any.
+Removed all NA values in education.
 
 ```{r}
 # There are NA value
@@ -124,7 +124,7 @@ education = na.omit(education)
 There were 18 rows that contained NA values so we removed them.
 
 
-4. (2 pts) In education, in addition to State and County, we will start only on the following 4 features: Less than a high school diploma, 2015-19, High school diploma only, 2015-19, Some college or associate's degree, 2015-19, and Bachelor's degree or higher, 2015-19. Mutate the education dataset by selecting these 6 features only, and create a new feature which is the total population of that county.
+In education, in addition to State and County, we will start only on the following 4 features: Less than a high school diploma, 2015-19, High school diploma only, 2015-19, Some college or associate's degree, 2015-19, and Bachelor's degree or higher, 2015-19. Mutated the education dataset by selecting these 6 features only, and created a new feature which is the total population of that county.
 
 ```{r, warning=FALSE}
 #list of the features
@@ -140,14 +140,14 @@ education = education %>% select(State, County, features)
 education = education %>% mutate(TotalPop = rowSums(education[3:6]))
 ```
 
-5. (3 pts) Construct aggregated data sets from education data: i.e., create a state-level summary into a dataset named education.state.
+Constructed aggregated data sets from education data: i.e., create a state-level summary into a dataset named education.state.
 
 ```{r}
 # aggregate education by state but dont include State and County, using sum function
 education.state = aggregate(education[-c(1,2)], education["State"], sum)
 ```
 
-6. (4 pts) Create a data set named state.level on the basis of education.state, where you create a new feature which is the name of the education degree level with the largest population in that state.
+Created a data set named state.level on the basis of education.state, where you create a new feature which is the name of the education degree level with the largest population in that state.
 
 ```{r}
 index = 0
@@ -162,6 +162,8 @@ state.level
 
 ## Visualization
 
+Created a map of the US
+
 ```{r, warning=FALSE}
 library(ggplot2)
 states <- map_data("state")
@@ -173,7 +175,7 @@ ggplot(data = states) +
   guides(fill=FALSE)  # color legend is unnecessary for this example and takes too long
 ```
 
-7. (6 pts) Now color the map (on the state level) by the education level with highest population for each state. Show the plot legend.
+Colored the map (on the state level) by the education level with highest population for each state with plot legend
 
 ```{r}
 # convert regopm column from the full name of the States to the abbreviations
@@ -194,8 +196,7 @@ ggplot(data = stateseducation) +
   guides(fill=guide_legend(title = 'Level of Education'))
 ```
 
-8. (6 pts) (Open-ended) Create a visualization of your choice using census data. Use this R graph gallery for ideas and inspiration.
-
+Created a barplot showing the proportions of the type of employment within census data 
 
 ```{r}
 census.narm <- na.omit(census)
@@ -253,7 +254,7 @@ ggplot(data.frame(employment, work), aes(x = employment, y = work)) +
 ```
 
 
-9. The census data contains county-level census information. In this problem, we clean and aggregate the information as follows. (4 pts) Start with census, filter out any rows with missing values, convert {Men, Employed, VotingAgeCitizen} attributes to percentages, compute Minority attribute by combining {Hispanic, Black, Native, Asian, Pacific}, remove these variables after creating Minority, remove {Walk, PublicWork, Construction, Unemployment}.(Note that many columns are perfectly collineared, in which case one column should be deleted.)
+The census data contains county-level census information. Starting with census, we filtered out any rows with missing values, converted {Men, Employed, VotingAgeCitizen} attributes to percentages, computed Minority attribute by combining {Hispanic, Black, Native, Asian, Pacific}, and removed these variables {Walk, PublicWork, Construction, Unemployment, Hispanic, Black, Native, Asian, Pacific}. (many columns are perfectly collineared, in which case one column should be deleted.)
 
 ```{r}
 set.seed(123)
@@ -284,7 +285,7 @@ census.clean <- census %>% select(-c(Hispanic,
 
 ```
 
-10. (1 pts) Print the first 5 rows of census.clean
+
 
 ```{r}
 # check first 5 rows of cleaned census data
@@ -293,7 +294,7 @@ head(census.clean,5)
 
 ## Dimensionality Reduction
 
-11. Run PCA for the cleaned county level census data (with State and County excluded). (2 pts) Save the first two principle components PC1 and PC2 into a two-column data frame, call it pc.county. (2 pts) Discuss whether you chose to center and scale the features before running PCA and the reasons for your choice. (2 pts) What are the three features with the largest absolute values of the first principal component? (2 pts) Which features have opposite signs and what does that mean about the correlation between these features?
+Ran PCA for dimensionality reduction of the cleaned county level census data (with State and County excluded). Saved the first two  principle components PC1 and PC2 into a two-column data frame, called pc.county. Centered and scaled the features before running PCA. Found the three features with the largest absolute values of the first principal component. Found the features that have opposite signs.
 
 ```{r,warning=FALSE}
 # check variance of data
@@ -327,7 +328,7 @@ Minority
 
 The features Men, White, VotingAgeCitizen, Professional, OtherTransp, WorkAtHome, Employed, SelfEmployed, and FamilyWork have approximately opposite signs to Poverty which implies that those features are negatively linearly correlated with Poverty. So as those features increase, poverty decreases. 
 
-12. (2 pts) Determine the number of minimum number of PCs needed to capture 90% of the variance for the analysis. (2 pts) Plot proportion of variance explained (PVE) and cumulative PVE.
+Determined the number of minimum number of PCs needed to capture 90% of the variance for the analysis and plotted the proportion of variance explained (PVE) and cumulative PVE.
 ```{r}
 # create variance 
 pr.var = pr.out$sdev^2
@@ -346,7 +347,7 @@ The number of minimum number of PCs needed to capture 90% of the variance is 12
 
 ## Clustering
 
-13. (2 pts) With census.clean (with State and County excluded), perform hierarchical clustering with complete linkage. (2 pts) Cut the tree to partition the observations into 10 clusters. (2 pts) Re-run the hierarchical clustering algorithm using the first 2 principal components from pc.county as inputs instead of the original features. (2 pts) Compare the results and comment on your observations. For both approaches investigate the cluster that contains Santa Barbara County. (2 pts) Which approach seemed to put Santa Barbara County in a more appropriate clusters? Comment on what you observe and discuss possible explanations for these observations.
+With census.clean (with State and County excluded), performed hierarchical clustering with complete linkage. Cut the tree to partition the observations into 10 clusters. Re-ran the hierarchical clustering algorithm using the first 2 principal components from pc.county as inputs instead of the original features. Compared the results and for both approaches investigated the cluster that contains Santa Barbara County.
 
 ```{r}
 library(cluster)
@@ -409,7 +410,7 @@ Clus.county seems to put Santa Barbara County in a more appropriate cluster beca
 
 We are interested in binary classification. Specifically, we will transform Poverty into a binary categorical variable: high and low, and conduct its classification.
 
-In order to build classification models, we first need to combine education and census.clean data (and removing all NAs), which can be achieved using the following code.
+In order to build classification models, we first need to combine education and census.clean data (and removing all NAs)
 
 
 ```{r}
@@ -419,10 +420,10 @@ all <- census.clean %>%
   na.omit
 ```
 
-14. (4 pts) Transform the variable Poverty into a binary categorical variable with two levels: 1 if Poverty is greater than 20, and 0 if Poverty is smaller than or equal to 20. Remove features that you think are uninformative in classfication tasks.
+Transformed the variable Poverty into a binary categorical variable with two levels: 1 if Poverty is greater than 20, and 0 if Poverty is smaller than or equal to 20. Removed features that are uninformative in classfication tasks.
 
 
-We wanted to remove as many features as possible in order to simplify our model so we assessed which features did not necessarilyimpact Poverty. We removed the features Drive, Carpool, Transit, OtherTransp, State, County, MeanCommute, Men, Women, and VotingAgeCitizen because we believe these features are uninformative in regards to questions surrounding the causes of Poverty. For example, the total amount of Men and Women in a county does not give us any specific information about poverty. The gender of a person does not necessarily impact whether or not one experiences poverty. 
+We wanted to remove as many features as possible in order to simplify our model so we assessed which features did not necessarily impact Poverty. We removed the features Drive, Carpool, Transit, OtherTransp, State, County, MeanCommute, Men, Women, and VotingAgeCitizen because we believe these features are uninformative in regards to questions surrounding the causes of Poverty. For example, the total amount of Men and Women in a county does not give us any specific information about poverty. The gender of a person does not necessarily impact whether or not one experiences poverty. 
 
 
 ```{r}
@@ -459,7 +460,7 @@ folds <- sample(cut(1:nrow(all.tr), breaks=nfold, labels=FALSE))
 
 ```{r}
 # error rate function, the object records is used to record 
-# the classification performance of each method in the subsequent problems.
+# the classification performance of each method 
 
 calc_error_rate = function(predicted.value, true.value){
   return(mean(true.value!=predicted.value))
@@ -471,7 +472,9 @@ rownames(records) = c("tree","logistic","lasso")
 
 ## Classification 
 
-15. Decision tree: (2 pts) train a decision tree by cv.tree(). (2 pts) Prune tree to minimize misclassification error. Be sure to use the folds from above for cross-validation. (2 pts) Visualize the trees before and after pruning. (1 pts) Save training and test errors to records object. (2 pts) Interpret and discuss the results of the decision tree analysis. (2 pts) Use this plot to tell a story about Poverty.
+Decision tree: 
+
+Trained a decision tree by cv.tree(). Pruned tree to minimize misclassification error. Visualized the trees before and after pruning. Saved training and test errors to records object. Interpreted and discussed the results of the decision tree analysis. 
 
 
 ```{r}
@@ -535,8 +538,9 @@ The test result for the pruned tree is the same as the unpruned tree. Therefore,
 
 From the graph of the pruned tree, one can see that Poverty is determined mainly by the features employed and white. If a the percentage of employment is greater than 42%, we classify there to be no poverty. However, if it is less than 42% we will look at the white feature. If the white feature is less than 63%, we predict that there will be poverty and vice-versa.
 
+#Logistic Regression
 
-16. (2 pts) Run a logistic regression to predict Poverty in each county. (1 pts) Save training and test errors to records variable. (1 pts) What are the significant variables? (1 pts) Are they consistent with what you saw in decision tree analysis? (2 pts) Interpret the meaning of a couple of the significant coefficients in terms of a unit change in the variables.
+Ran a logistic regression to predict Poverty in each county. Saved training and test errors to records variable. Found significant variables and compared with decision tree analysis. Interpreted the meaning of a couple of the significant coefficients in terms of a unit change in the variables.
 ```{r}
 set.seed(123)
 # fit logistic regression model on training set
@@ -564,16 +568,13 @@ accuracy1 = table(predPoverty1, all.te$Poverty)
 
 
 warning glm.fit: fitted probabilities numerically 0 or 1 occurred
+
 this is an indication that we have perfect separation (some linear combination of variables perfectly predicts the winner).
 This is usually a sign that we are overfitting. One way to control overfitting in logistic regression is through regularization.
 
-17. You may notice that you get a warning glm.fit: fitted probabilities numerically 0 or 1 occurred. As we discussed in class, this is an indication that we have perfect separation (some linear combination of variables perfectly predicts the winner).
+Used the cv.glmnet function from the glmnet library to run a 10-fold cross validation and select the best regularization parameter for the logistic regression with LASSO penalty. Set lambda = seq(1, 20) * 1e-5 in cv.glmnet() function to set pre-defined candidate values for the tuning parameter λ.
 
-This is usually a sign that we are overfitting. One way to control overfitting in logistic regression is through regularization.
-
-(3 pts) Use the cv.glmnet function from the glmnet library to run a 10-fold cross validation and select the best regularization parameter for the logistic regression with LASSO penalty. Set lambda = seq(1, 20) * 1e-5 in cv.glmnet() function to set pre-defined candidate values for the tuning parameter λ.
-
-(1 pts) What is the optimal value of λ in cross validation? (1 pts) What are the non-zero coefficients in the LASSO regression for the optimal value of λ? (1 pts) How do they compare to the unpenalized logistic regression? (1 pts) Comment on the comparison. (1 pts) Save training and test errors to the records variable.
+Found the optimal value of λ in cross validation and compared results to the unpenalized logistic regression.
 
 
 ```{r}
@@ -619,7 +620,7 @@ predicted.classes.t <- ifelse(probabilities <= 0.5, "0", "1")
 ```
 
 
-18. (6 pts) Compute ROC curves for the decision tree, logistic regression and LASSO logistic regression using predictions on the test data. Display them on the same plot. (2 pts) Based on your classification results, discuss the pros and cons of the various methods. (2 pts) Are the different classifiers more appropriate for answering different kinds of questions about Poverty?
+Computed ROC curves for the decision tree, logistic regression and LASSO logistic regression using predictions on the test data. Displayed them on the same plot. Compared the different methods
 
 ```{r, warning=FALSE}
 # Decision Tree ROC
@@ -655,7 +656,6 @@ The tree model has better interpretability than the other models, but it is limi
 The tree model would not be useful in answering questions about new data regarding poverty since a small change in the data can cause a big change in the structure of the tree.
 
 
-19. (9 pts) Explore additional classification methods. Consider applying additional two classification methods from KNN, LDA, QDA, SVM, random forest, boosting, neural networks etc. (You may research and use methods beyond those covered in this course). How do these compare to the tree method, logistic regression, and the lasso logistic regression?
 
 Random Forest :
 
@@ -881,14 +881,13 @@ The model we prefer depends on the question we are asking regarding Poverty. If 
 They compliment one another because our classification methods allow us to analyze our data through a broad scope while the regression model allows us to approach our questions through a more magnified lens. 
 
 
+#Conclusion :
 
-21.(9 pts) (Open ended) Interpret and discuss any overall insights gained in this analysis and possible explanations. Use any tools at your disposal to make your case: visualize errors on the map, discuss what does/doesn’t seems reasonable based on your understanding of these methods, propose possible directions (collecting additional data, domain knowledge, etc).
-
-Before beginning to perform our data analytics we believed the education level would have a heavy weight on the ranking of Poverty in a county. However, through the use of our lasso model's coefficients we discovered that the four education variables had a very low coefficient, around .0002, almost zero. This shows that they are not significant features. When we performed step selection on our linear model, three of the four education variables were completely removed from the model. Also, our pruned tree did not include these features.From this we can infer that education level does not necessarily contribute to poverty. However, if we were analyzing wealth disparity, we would expect to see education level variables play a more significant role in the model. 
+Before beginning to perform our data analytics we believed the education level would have a heavy weight on the ranking of Poverty in a county. However, through the use of our lasso model's coefficients we discovered that the four education variables had a very low coefficient, around .0002, almost zero. This shows that they are not significant features. When we performed step selection on our linear model, three of the four education variables were completely removed from the model. Also, our pruned tree did not include these features. From this we can infer that education level does not necessarily contribute to poverty. However, if we were analyzing wealth disparity, we would expect to see education level variables play a more significant role in the model. 
 
 Our best performing model based off of test error was our logistic regression model. The logistic regression model performs well with binary classification. This model is more interpretable and gives us a broad overview when sorting counties into a 1 or 0 rank. Although this model fit our data the best, we believe that we could possibly be dismissing valuable differences between counties within the same ranked group that could address the degree of poverty. 
 
-Through all of our data analytics, Employment is consistently a significant feature. Employment was the first feature in our decision tree as well as the most significant feature when performing lasso. In our PC1 analyses, we observe that employment is negatively linearly correlated with Poverty. This means that as employment increases within a county, poverty decreases. This intuitively makes sense when thinking about the causes of Poverty and from these data tools we can infer that employment is a dominant factor when assessing poverty within a county. 
+Through all of our data analytics, Employment is consistently a significant feature. Employment was the first feature in our decision tree as well as the most significant feature when performing lasso. In our PC1 analysis, we observe that employment is negatively linearly correlated with Poverty. This means that as employment increases within a county, poverty decreases. This intuitively makes sense when thinking about the causes of Poverty and from these data tools we can infer that employment is a dominant factor when assessing poverty within a county. 
 
 If we wanted to further explore the causes of Poverty we could sample and add new features such as homelessness within a county and population by square foot. These features could shed light on poverty within cities where homelessness is high. We have shown that different models provide different answers that other models cannot and thus it is important to select your model based on what question you are asking. 
 
